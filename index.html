@@ -18,12 +18,25 @@
   <button type="submit">Add</button>
 </form>
 <ul id="habit-list"></ul>
+<p id="last-saved">Last saved: Not saved yet.</p>
 <script>
   const STORAGE_KEY = 'habits';
+  const LAST_SAVED_KEY = 'habits-last-saved';
   let habits = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+  function updateLastSaved() {
+    const savedAt = localStorage.getItem(LAST_SAVED_KEY);
+    const date = savedAt ? new Date(savedAt) : null;
+    const time = date && !Number.isNaN(date.getTime())
+      ? date.toLocaleString()
+      : 'Not saved yet';
+    document.getElementById('last-saved').textContent = `Last saved: ${time}`;
+  }
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
+    localStorage.setItem(LAST_SAVED_KEY, new Date().toISOString());
+    updateLastSaved();
   }
 
   function render() {
@@ -49,6 +62,7 @@
     render();
   });
 
+  updateLastSaved();
   render();
 </script>
 </body>
