@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Habit tracker</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
+  li { display: flex; justify-content: space-between; padding: .4rem 0; border-bottom: 1px solid #ddd; }
+  form { display: flex; gap: .5rem; margin-bottom: 1rem; }
+  input { flex: 1; padding: .4rem; }
+</style>
+</head>
+<body>
+<h1>Habit tracker</h1>
+<form id="add-form">
+  <input id="habit-name" placeholder="New habit" required>
+  <button type="submit">Add</button>
+</form>
+<ul id="habit-list"></ul>
+<script>
+  const STORAGE_KEY = 'habits';
+  let habits = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
+  }
+
+  function render() {
+    const list = document.getElementById('habit-list');
+    list.innerHTML = '';
+    habits.forEach((h, i) => {
+      const li = document.createElement('li');
+      li.textContent = h;
+      const del = document.createElement('button');
+      del.textContent = 'Delete';
+      del.onclick = () => { habits.splice(i, 1); save(); render(); };
+      li.appendChild(del);
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById('add-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = document.getElementById('habit-name');
+    habits.push(input.value.trim());
+    input.value = '';
+    save();
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
